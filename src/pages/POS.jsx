@@ -1,55 +1,142 @@
-import { useState } from 'react'
-import { loadDB, saveDB, rp } from '../lib/store.js'
+import { useState, useMemo } from 'react'
+import { loadDB, saveDB, rp, effPrice, uid } from '../lib/store.js'
+import { Card } from './Dashboard.jsx'
+
+const METHODS = [['cash','💵 Tunai'],['qris','📱 QRIS'],['transfer','🏦 Transfer'],['debit','💳 Debit']]
 
 export default function POS() {
   const [db, setDb] = useState(loadDB())
   const [cart, setCart] = useState([])
-  const [paid, setPaid] = useState(false)
-  const add = p => setCart(c => { const f=c.find(x=>x.id===p.id); return f ? c.map(x=>x.id===p.id?{...x,qty:x.qty+1}:x) : [...c,{...p,qty:1}] })
-  const dec = id => setCart(c => c.flatMap(x => x.id===id ? (x.qty>1 ? [{...x,qty:x.qty-1}] : []) : [x]))
-  const total = cart.reduce((s,x)=>s+x.price*x.qty,0)
-  const pay = () => {
-    const next = {...db,
-      txs: [...db.txs, {id:'t'+Date.now(), items:cart, total, at:new Date().toISOString()}],
-      products: db.products.map(p => { const c=cart.find(x=>x.id===p.id); return c ? {...p, stock:p.stock-c.qty} : p })}
-    saveDB(next); setDb(next); setCart([]); setPaid(true); setTimeout(()=>setPaid(false),2500)
+  const [method, setMethod] = useState('cash')
+  const [paid, setPaid] = useState('')
+  const [done, setDone] = useState(null)
+  const [q, setQ] = useState('')
+
+  const ppnOn = db.settings?.ppnOn
+  const sub = cart.reduce((s,l)=>s + effPrice(l.p)*l.qty, 0)
+  const disc = cart.reduce((s,l)=>s + (l.p.price-effPrice(l.p))*l.qty, 0)
+  const tax = ppnOn ? Math.round(sub*0.11) : 0
+  const total = sub + tax
+  const change = Math.max(0, (Number(paid)||0) - total)
+
+  const list = useMemo(() =>
+    [...db.products, ...db.bundles.map(b=>({...b, isBundle:true}))].filter(p=>p.name.toLowerCase().includes(q.toLowerCase()))
+  , [db, q])
+
+  const addP = p => {
+    setCart(c => {
+      const f = c.find(l=>l.p.id===p.id)
+      return f ? c.map(l=>l.p.id===p.id?{...l,qty:l.qty+1}:l) : [...c, {p, qty:1}]
+    })
   }
+  const setQty = (id,qty) => setCart(c => qty<=0 ? c.filter(l=>l.p.id!==id) : c.map(l=>l.p.id===id?{...l,qty}:l))
+
+  const checkout = () => {
+    if (!cart.length || (Number(paid)||0) < total && method==='cash') return
+    // kurangi stok
+    const products = db.products.map(p => {
+      const line = cart.find(l=>l.p.id===p.id)
+      return line ? {...p, stock: p.stock - line.qty} : p
+    })
+    // bundle: kurangi stok komponen
+    let prods = products
+    cart.filter(l=>l.p.isBundle).forEach(l => {
+      prods = prods.map(p => {
+        const comp = l.p.items?.find(i=>i.productId===p.id)
+        return comp ? {...p, stock: p.stock - comp.qty*l.qty} : p
+      })
+    })
+    const tx = { id: uid('t'), date: new Date().toISOString(), items: cart.map(l=>({name:l.p.name, qty:l.qty, price:effPrice(l.p), disc:l.p.discount||0})), sub, disc, tax, total, method }
+    const db2 = {...db, products: prods, txs: [...db.txs, tx], payments: [...db.payments, {txId:tx.id, method, paid:Number(paid)||total, change}] }
+    saveDB(db2); setDb(db2); setDone({tx, change, paid:Number(paid)||total}); setCart([]); setPaid('')
+  }
+  const newSale = () => setDone(null)
+
+  if (done) return (
+    <div className="p-4 md:p-7 max-w-lg mx-auto text-center">
+      <div className="card p-8">
+        <div className="text-5xl mb-3">✅</div>
+        <h1 className="font-disp text-xl font-extrabold mb-1">Transaksi berhasil</h1>
+        <p className="text-inksoft text-[13px] mb-5">{done.tx.items.length} item · {done.tx.method.toUpperCase()}</p>
+        <div className="card2 p-4 text-left text-[13.5px] space-y-1.5 mb-5">
+          {done.tx.items.map((i,idx)=>(
+            <div key={idx} className="flex justify-between"><span>{i.qty}× {i.name}{i.disc?` (-${i.disc}%)`:''}</span><b>{rp(i.price*i.qty)}</b></div>
+          ))}
+          <div className="flex justify-between border-t border-line pt-2"><span>Subtotal</span><span>{rp(done.tx.sub)}</span></div>
+          {done.tx.tax>0 && <div className="flex justify-between"><span>PPN 11%</span><span>{rp(done.tx.tax)}</span></div>}
+          <div className="flex justify-between font-bold text-[15px]"><span>Total</span><span className="text-hero">{rp(done.tx.total)}</span></div>
+          <div className="flex justify-between text-inksoft"><span>Bayar ({done.tx.method})</span><span>{rp(done.paid)}</span></div>
+          {done.tx.method==='cash' && <div className="flex justify-between"><span>Kembalian</span><b className="text-lime">{rp(done.change)}</b></div>}
+        </div>
+        <button onClick={newSale} className="btn-primary px-6 py-3 text-[14px]">Transaksi baru</button>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="p-4 md:p-7 max-w-6xl mx-auto">
-      <header className="flex items-center gap-3 mb-5">
+    <div className="p-3 md:p-6 max-w-6xl mx-auto">
+      <div className="flex items-center gap-3 mb-4">
         <h1 className="font-disp text-lg md:text-xl font-extrabold">Kasir</h1>
-        {paid && <span className="ml-auto pill bg-mint-soft text-emerald-700">✓ Transaksi tersimpan</span>}
-      </header>
-      <div className="grid lg:grid-cols-[1.5fr_1fr] gap-3.5">
-        <div className="card p-5">
-          <h3 className="font-disp font-bold text-[14.5px] mb-3">Pilih produk</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-            {db.products.map(p => (
-              <button key={p.id} onClick={()=>add(p)} disabled={p.stock<1}
-                className="border border-line rounded-2xl p-3.5 text-center hover:border-ocean hover:shadow-soft transition disabled:opacity-40 bg-white">
-                <div className="text-3xl">{p.emoji}</div>
-                <div className="font-semibold text-xs mt-2">{p.name}</div>
-                <div className="text-ocean-ink font-extrabold text-[13px] mt-0.5">{rp(p.price)}</div>
-                <div className="text-[10.5px] text-inksoft mt-0.5">stok {p.stock}</div>
+        <button onClick={()=>{const s={...db.settings, ppnOn:!ppnOn}; const d2={...db, settings:s}; saveDB(d2); setDb(d2)}}
+          className={'pill ml-auto ' + (ppnOn?'bg-hero-soft text-hero':'bg-card2 text-inksoft')}>
+          PPN 11% {ppnOn?'AKTIF':'nonaktif'}
+        </button>
+      </div>
+      <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4">
+        {/* katalog */}
+        <div>
+          <input className="inp mb-3" placeholder="🔍 Cari produk…" value={q} onChange={e=>setQ(e.target.value)}/>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {list.map(p => (
+              <button key={p.id} onClick={()=>addP(p)} className="card p-3.5 text-left hover:shadow-pop transition-shadow relative">
+                {p.isBundle && <span className="absolute top-2 right-2 pill bg-bluea-soft text-bluea">PAKET</span>}
+                {(p.discount>0) && <span className="absolute top-2 left-2 pill bg-coral-soft text-coral">-{p.discount}%</span>}
+                <div className="text-2xl mb-1">{p.emoji}</div>
+                <b className="text-[12.5px] block leading-tight truncate">{p.name}</b>
+                <div className="flex items-baseline gap-1.5 mt-0.5">
+                  <span className="text-hero font-bold text-[13px]">{rp(effPrice(p))}</span>
+                  {p.discount>0 && <s className="text-dim text-[10.5px]">{rp(p.price)}</s>}
+                </div>
+                {!p.isBundle && <div className={'text-[10.5px] '+(p.stock<=p.minStock?'text-coral font-semibold':'text-dim')}>stok {p.stock}</div>}
               </button>
             ))}
           </div>
         </div>
-        <div className="card p-5 h-fit lg:sticky lg:top-20">
-          <h3 className="font-disp font-bold mb-2">Keranjang</h3>
-          {cart.length===0 && <p className="text-inksoft text-[13px] py-5 text-center">Belum ada item.<br/>Klik produk di samping.</p>}
-          {cart.map(x => (
-            <div key={x.id} className="flex items-center gap-2 py-2 text-[13px] border-b border-dashed border-line">
-              <span className="flex-1">{x.name}</span>
-              <button onClick={()=>dec(x.id)} className="w-6 h-6 rounded-lg bg-paper font-bold">−</button>
-              <b className="w-6 text-center">{x.qty}</b>
-              <button onClick={()=>add(x)} className="w-6 h-6 rounded-lg bg-ocean-soft text-ocean-ink font-bold">+</button>
-              <b className="w-20 text-right">{rp(x.price*x.qty)}</b>
+        {/* keranjang */}
+        <div className="card p-4 h-fit sticky top-24">
+          <h3 className="font-disp font-bold text-[14.5px] mb-3">Keranjang ({cart.length})</h3>
+          {!cart.length && <p className="text-inksoft text-[13px]">Klik produk untuk menambah.</p>}
+          {cart.map(l => (
+            <div key={l.p.id} className="flex items-center gap-2 py-2 border-b border-line last:border-0">
+              <span className="text-lg">{l.p.emoji}</span>
+              <div className="min-w-0 flex-1"><b className="text-[12.5px] block truncate">{l.p.name}</b><span className="text-[11px] text-inksoft">{rp(effPrice(l.p))}</span></div>
+              <div className="flex items-center gap-1.5">
+                <button onClick={()=>setQty(l.p.id,l.qty-1)} className="w-7 h-7 rounded-lg bg-card2 font-bold">−</button>
+                <span className="w-6 text-center text-[13px] font-bold">{l.qty}</span>
+                <button onClick={()=>setQty(l.p.id,l.qty+1)} className="w-7 h-7 rounded-lg bg-hero text-white font-bold">+</button>
+              </div>
             </div>
           ))}
           {cart.length>0 && <>
-            <div className="flex justify-between font-disp font-extrabold text-lg my-3.5"><span>Total</span><span className="text-ocean-ink">{rp(total)}</span></div>
-            <button onClick={pay} className="btn-primary w-full py-3.5">Bayar Sekarang</button>
+            <div className="mt-3 space-y-1 text-[13px]">
+              <div className="flex justify-between text-inksoft"><span>Subtotal</span><span>{rp(sub)}</span></div>
+              {disc>0 && <div className="flex justify-between text-coral"><span>Diskon produk</span><span>−{rp(disc)}</span></div>}
+              {ppnOn && <div className="flex justify-between text-inksoft"><span>PPN 11%</span><span>{rp(tax)}</span></div>}
+              <div className="flex justify-between font-disp font-extrabold text-[16px] pt-1 border-t border-line"><span>Total</span><span className="text-hero">{rp(total)}</span></div>
+            </div>
+            <div className="grid grid-cols-4 gap-1.5 mt-3">
+              {METHODS.map(([k,label])=>(
+                <button key={k} onClick={()=>setMethod(k)} className={'rounded-xl py-2 text-[10.5px] font-semibold '+(method===k?'bg-hero text-white':'bg-card2 text-inksoft')}>{label.split(' ')[0]}</button>
+              ))}
+            </div>
+            {method==='cash' && <>
+              <input className="inp mt-2.5" type="number" placeholder="Uang diterima" value={paid} onChange={e=>setPaid(e.target.value)}/>
+              {Number(paid)>0 && <div className="text-right text-[12.5px] mt-1">Kembalian: <b className={(change>=0?'text-lime':'text-coral')}>{rp(Math.abs(change))}{change<0?' kurang':''}</b></div>}
+            </>}
+            <button onClick={checkout} disabled={method==='cash' && (Number(paid)||0)<total}
+              className="btn-primary w-full py-3 mt-3 text-[14px] disabled:opacity-40">
+              Bayar {rp(total)}
+            </button>
           </>}
         </div>
       </div>

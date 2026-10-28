@@ -12,8 +12,11 @@ const nav = [
   { to: '/pelanggan', icon: '👥', name: 'Pelanggan' },
   { to: '/pemasok', icon: '🏢', name: 'Pemasok' },
   { to: '/pegawai', icon: '🧑\u200d💼', name: 'Pegawai' },
+  { to: '/pembelian', icon: '📥', name: 'Pembelian' },
+  { to: '/produksi', icon: '🎁', name: 'Produksi' },
+  { to: '/pengaturan', icon: '⚙️', name: 'Pengaturan' },
 ]
-const bottomNav = nav.filter(n => ['/','/pos','/inventori','/laporan','/pegawai'].includes(n.to))
+const bottomNav = nav.filter(n => ['/','/pos','/inventori','/laporan','/pembelian'].includes(n.to))
 
 export default function Layout() {
   const [lowStock, setLowStock] = useState(0)
@@ -42,7 +45,7 @@ export default function Layout() {
             <span className="hidden sm:inline">Toko<span className="text-hero">Kita</span></span>
           </div>
           <div className="hidden lg:flex items-center gap-1 ml-6 flex-1">
-            {nav.slice(0,5).map(it => (
+            {nav.slice(0,7).map(it => (
               <NavLink key={it.to} to={it.to} end={it.to==='/'}
                 className={({isActive}) => 'px-4 py-2 rounded-full text-[13px] font-medium ' + (isActive?'bg-hero text-white font-semibold':'text-inksoft hover:text-ink')}>
                 {it.name}

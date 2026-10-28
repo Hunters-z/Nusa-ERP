@@ -1,0 +1,64 @@
+import { useState } from 'react'
+import { loadDB, saveDB, rp, uid } from '../lib/store.js'
+import { Card } from './Dashboard.jsx'
+import { Input } from './Inventory.jsx'
+
+export default function Bundles() {
+  const [db, setDb] = useState(loadDB())
+  const [form, setForm] = useState({name:'', emoji:'🎁', price:''})
+  const [items, setItems] = useState([]) // {productId, qty}
+  const [stock, setStock] = useState(10)
+  const add = () => {
+    if (!form.name || !items.length) return
+    const b = { id:uid('b'), name:form.name, emoji:form.emoji||'🎁', price:+form.price||0, items, stock:+stock }
+    // produksi: komponen keluar dari stok
+    const products = db.products.map(p => {
+      const c = items.find(i=>i.productId===p.id)
+      return c ? {...p, stock: p.stock - c.qty*b.stock} : p
+    })
+    const db2 = {...db, products, bundles:[...db.bundles, b]}
+    saveDB(db2); setDb(db2); setForm({name:'', emoji:'🎁', price:''}); setItems([]); setStock(10)
+  }
+  return (
+    <div className="p-4 md:p-7 max-w-6xl mx-auto">
+      <h1 className="font-disp text-lg md:text-xl font-extrabold mb-4">Produksi & Paket</h1>
+      <Card title="Buat paket / produksi (komponen otomatis keluar dari stok)">
+        <div className="flex flex-wrap gap-2.5 items-end mb-3">
+          <Input label="Emoji" value={form.emoji} onChange={v=>setForm({...form,emoji:v})} style={{width:70}}/>
+          <Input label="Nama paket" value={form.name} onChange={v=>setForm({...form,name:v})}/>
+          <Input label="Harga jual" value={form.price} onChange={v=>setForm({...form,price:v})} type="number"/>
+          <Input label="Jumlah buat" value={stock} onChange={setStock} type="number"/>
+        </div>
+        <div className="flex flex-wrap gap-2 items-end mb-3">
+          <select className="inp w-48" onChange={e=>{if(e.target.value) setItems(i=>[...i,{productId:e.target.value, qty:1}])}} defaultValue="">
+            <option value="">+ Tambah komponen…</option>
+            {db.products.map(p=><option key={p.id} value={p.id}>{p.name} (stok {p.stock})</option>)}
+          </select>
+          {items.map((it,i)=>(
+            <span key={i} className="pill bg-card2 text-inksoft flex items-center gap-1.5">
+              {db.products.find(p=>p.id===it.productId)?.name}
+              <input type="number" min="1" value={it.qty} onChange={e=>setItems(items.map((x,j)=>j===i?{...x,qty:+e.target.value}:x))}
+                className="w-12 bg-transparent text-center outline-none"/>
+              <button onClick={()=>setItems(items.filter((_,j)=>j!==i))} className="text-coral">✕</button>
+            </span>
+          ))}
+        </div>
+        <button onClick={add} className="btn-primary text-[13px] px-5 py-2.5">Produksi</button>
+      </Card>
+      <Card title="Paket aktif (muncul di Kasir)">
+        {!db.bundles.length && <p className="text-inksoft text-[13px]">Belum ada paket.</p>}
+        <div className="grid md:grid-cols-3 gap-3">
+          {db.bundles.map(b=>(
+            <div key={b.id} className="card2 p-4">
+              <div className="text-2xl">{b.emoji}</div>
+              <b className="text-[13.5px]">{b.name}</b>
+              <div className="text-hero font-bold text-[13px]">{rp(b.price)}</div>
+              <div className="text-[11px] text-inksoft mt-1">{b.items.map(i=>`${i.qty}× ${db.products.find(p=>p.id===i.productId)?.name}`).join(' + ')}</div>
+              <div className="text-[11px] text-dim">stok {b.stock}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  )
+}

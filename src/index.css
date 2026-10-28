@@ -18,3 +18,9 @@ table { width:100%; border-collapse:collapse; }
 th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#9AA1AD; padding:8px 10px; }
 td { padding:11px 10px; font-size:13.5px; border-top:1px solid #E6E9F0; }
 .gain { color:#16A34A; } .loss { color:#DC2626; }
+
+.sw { width:46px;height:28px;border-radius:99px;background:#D9DCE1;position:relative;flex-shrink:0;cursor:pointer;transition:.2s;display:inline-block }
+.sw.on { background:#2563EB }
+.sw i { position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.18) }
+.sw.on i { left:21px }
+.dark .sw { background:#3A3A42 }

@@ -10,6 +10,9 @@ import Expenses from './pages/Expenses.jsx'
 import Reports from './pages/Reports.jsx'
 import Employees from './pages/Employees.jsx'
 import Attendance from './pages/Attendance.jsx'
+import Purchases from './pages/Purchases.jsx'
+import Bundles from './pages/Bundles.jsx'
+import SettingsPage from './pages/Settings.jsx'
 
 export default function App() {
   return (
@@ -25,6 +28,9 @@ export default function App() {
         <Route path="/laporan" element={<Reports/>}/>
         <Route path="/pegawai" element={<Employees/>}/>
         <Route path="/absen" element={<Attendance/>}/>
+        <Route path="/pembelian" element={<Purchases/>}/>
+        <Route path="/produksi" element={<Bundles/>}/>
+        <Route path="/pengaturan" element={<SettingsPage/>}/>
       </Route>
     </Routes>
   )
