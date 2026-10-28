@@ -16,6 +16,13 @@ const seed = {
   ],
   invoices: [],
   txs: [],
+  employees: [
+    { id: 'e1', name: 'Rina Kasir', role: 'Kasir', pin: '1234', credId: null },
+    { id: 'e2', name: 'Doni Gudang', role: 'Gudang', pin: '2345', credId: null },
+  ],
+  attendance: [],
+  suppliers: [],
+  expenses: [],
 }
 export function loadDB() {
   try { return JSON.parse(localStorage.getItem(KEY)) || structuredClone(seed) }

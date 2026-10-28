@@ -7,8 +7,13 @@ const nav = [
   { to: '/pos', icon: '🛒', name: 'Kasir' },
   { to: '/inventori', icon: '📦', name: 'Inventori' },
   { to: '/invoice', icon: '🧾', name: 'Invoice' },
+  { to: '/pengeluaran', icon: '💸', name: 'Pengeluaran' },
+  { to: '/laporan', icon: '📊', name: 'Laporan' },
   { to: '/pelanggan', icon: '👥', name: 'Pelanggan' },
+  { to: '/pemasok', icon: '🏢', name: 'Pemasok' },
+  { to: '/pegawai', icon: '🧑‍💼', name: 'Pegawai' },
 ]
+const bottomNav = nav.filter(n => ['/','/pos','/inventori','/laporan','/pegawai'].includes(n.to))
 
 export default function Layout() {
   const [lowStock, setLowStock] = useState(0)
@@ -35,7 +40,10 @@ export default function Layout() {
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-ocean to-blue-600 grid place-items-center text-sm">N</span>
             <span className="hidden sm:inline">Nusa ERP</span>
           </div>
-          <div className="ml-auto hidden md:flex items-center bg-white/10 rounded-xl px-3.5 py-1.5 text-[13px] text-slate-300 w-80">🔍 Cari produk, pelanggan, invoice…</div>
+          <div className="ml-auto hidden md:flex items-center gap-3">
+            <div className="flex items-center bg-white/10 rounded-xl px-3.5 py-1.5 text-[13px] text-slate-300 w-72">🔍 Cari…</div>
+            <a href="/absen" className="btn-primary text-[12.5px] px-3.5 py-2">👆 Absen</a>
+          </div>
         </div>
       </header>
 
@@ -54,6 +62,7 @@ export default function Layout() {
               <button className="ml-auto text-slate-400 text-lg" onClick={()=>setOpen(false)} aria-label="Tutup">✕</button>
             </div>
             <NavLinks onClick={()=>setOpen(false)}/>
+            <a href="/absen" className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-slate-300 hover:bg-white/10 mt-2">👆 Absen</a>
           </aside>
         </>}
 
@@ -61,7 +70,7 @@ export default function Layout() {
       </div>
 
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-line flex">
-        {nav.map(it => (
+        {bottomNav.map(it => (
           <NavLink key={it.to} to={it.to} end={it.to==='/'}
             className={({isActive}) => 'flex-1 flex flex-col items-center gap-0.5 py-2 text-[10.5px] font-semibold ' + (isActive?'text-ocean':'text-inksoft')}>
             <span className="text-lg">{it.icon}</span>{it.name}

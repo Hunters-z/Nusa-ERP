@@ -5,6 +5,11 @@ import POS from './pages/POS.jsx'
 import Inventory from './pages/Inventory.jsx'
 import Invoices from './pages/Invoices.jsx'
 import Customers from './pages/Customers.jsx'
+import Suppliers from './pages/Suppliers.jsx'
+import Expenses from './pages/Expenses.jsx'
+import Reports from './pages/Reports.jsx'
+import Employees from './pages/Employees.jsx'
+import Attendance from './pages/Attendance.jsx'
 
 export default function App() {
   return (
@@ -15,6 +20,11 @@ export default function App() {
         <Route path="/inventori" element={<Inventory/>}/>
         <Route path="/invoice" element={<Invoices/>}/>
         <Route path="/pelanggan" element={<Customers/>}/>
+        <Route path="/pemasok" element={<Suppliers/>}/>
+        <Route path="/pengeluaran" element={<Expenses/>}/>
+        <Route path="/laporan" element={<Reports/>}/>
+        <Route path="/pegawai" element={<Employees/>}/>
+        <Route path="/absen" element={<Attendance/>}/>
       </Route>
     </Routes>
   )
