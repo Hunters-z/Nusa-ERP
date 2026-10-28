@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { loadDB, saveDB, rp } from '../lib/store.js'
 import { Card } from './Dashboard.jsx'
+// Palette v0.2: ocean/navy
 
 export default function Inventory() {
   const [db, setDb] = useState(loadDB())
@@ -12,7 +13,7 @@ export default function Inventory() {
   }
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="font-disp text-lg font-bold mb-6">Inventori</h1>
+      <h1 className="font-disp text-lg md:text-xl font-extrabold mb-6">Inventori</h1>
       <Card title="Daftar produk">
         <table className="w-full text-[13px]">
           <thead><tr className="text-left text-inksoft text-[11.5px] uppercase tracking-wide">
@@ -23,7 +24,7 @@ export default function Inventory() {
                 <td className="py-2.5">{p.emoji} <b>{p.name}</b></td>
                 <td>{rp(p.price)}</td>
                 <td>{p.stock}</td>
-                <td>{p.stock<=p.minStock ? <span className="pill bg-coral-soft text-[#A83A28]">Restock</span> : <span className="pill bg-teal-soft text-teal-ink">Aman</span>}</td>
+                <td>{p.stock<=p.minStock ? <span className="pill bg-coral-soft text-red-700">Restock</span> : <span className="pill bg-mint-soft text-emerald-700">Aman</span>}</td>
               </tr>
             ))}
           </tbody>
@@ -35,7 +36,7 @@ export default function Inventory() {
         <Input label="Harga" type="number" value={form.price} onChange={v=>setForm({...form,price:v})} required/>
         <Input label="Stok" type="number" value={form.stock} onChange={v=>setForm({...form,stock:v})} required/>
         <Input label="Min. stok" type="number" value={form.minStock} onChange={v=>setForm({...form,minStock:v})}/>
-        <button className="bg-teal text-white font-bold text-[13px] rounded-[10px] px-4 py-2">Tambah produk</button>
+        <button className="btn-primary text-[13px] px-4 py-2.5">Tambah produk</button>
       </form>
     </div>
   )

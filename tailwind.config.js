@@ -1,11 +1,16 @@
 export default {
   content: ['./index.html','./src/**/*.{js,jsx}'],
-  theme: { extend: { colors: {
-    paper:'#F7F8F4', ink:'#1A2421', inksoft:'#5C6B64', line:'#E2E6DE',
-    teal:{DEFAULT:'#0E7C66',ink:'#0A5C4D',soft:'#E3F2E8'},
-    amber:{DEFAULT:'#E8A33D',soft:'#FBF0DC'},
-    coral:{DEFAULT:'#D95B43',soft:'#F9E3DF'},
-    sidebar:'#12211C'
-  }, fontFamily: { disp:['Sora','sans-serif'], body:['"Plus Jakarta Sans"','sans-serif'] } } },
+  theme: { extend: {
+    colors: {
+      paper:'#F5F8FC', ink:'#0F1B2D', inksoft:'#64748B', line:'#E3EAF3',
+      ocean:{DEFAULT:'#0891B2',ink:'#0E7490',deep:'#155E75',soft:'#E0F2FE'},
+      navy:{DEFAULT:'#0C1B33',mid:'#10254A'},
+      amber:{DEFAULT:'#F59E0B',soft:'#FEF3C7'},
+      coral:{DEFAULT:'#EF4444',soft:'#FEE2E2'},
+      mint:{DEFAULT:'#10B981',soft:'#D1FAE5'},
+    },
+    fontFamily: { disp:['Sora','sans-serif'], body:['"Plus Jakarta Sans"','sans-serif'] },
+    boxShadow: { soft:'0 1px 3px rgba(15,27,45,.06), 0 6px 20px rgba(15,27,45,.05)', pop:'0 10px 30px rgba(8,145,178,.25)' },
+  } },
   plugins: []
 }
