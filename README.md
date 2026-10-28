@@ -1,4 +1,4 @@
-# Nusa ERP
+# Toko Kita ERP
 
 ERP ringan berbahasa Indonesia — alternatif simpel dari Odoo. Jalan penuh di Vercel, tanpa server sendiri.
 
