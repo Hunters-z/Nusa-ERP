@@ -2,15 +2,23 @@ export default {
   content: ['./index.html','./src/**/*.{js,jsx}'],
   theme: { extend: {
     colors: {
-      paper:'#F5F8FC', ink:'#0F1B2D', inksoft:'#64748B', line:'#E3EAF3',
-      ocean:{DEFAULT:'#0891B2',ink:'#0E7490',deep:'#155E75',soft:'#E0F2FE'},
-      navy:{DEFAULT:'#0C1B33',mid:'#10254A'},
-      amber:{DEFAULT:'#F59E0B',soft:'#FEF3C7'},
-      coral:{DEFAULT:'#EF4444',soft:'#FEE2E2'},
-      mint:{DEFAULT:'#10B981',soft:'#D1FAE5'},
+      // FinPoint-style dark premium
+      bg:'#101013', card:'#1A1A1E', card2:'#212126', line:'#2A2A31',
+      ink:'#F4F4F5', inksoft:'#A0A0A8', dim:'#6E6E76',
+      hero:{DEFAULT:'#FF5A1F', soft:'rgba(255,90,31,.12)'},
+      lime:{DEFAULT:'#22C55E', soft:'rgba(34,197,94,.12)'},
+      gold:{DEFAULT:'#EAB308', soft:'rgba(234,179,8,.12)'},
+      coral:{DEFAULT:'#EF4444', soft:'rgba(239,68,68,.12)'},
+      bluea:{DEFAULT:'#3B82F6', soft:'rgba(59,130,246,.12)'},
+      // alias kelas lama → gaya FinPoint
+      paper:'#212126', ocean:{DEFAULT:'#FF5A1F',ink:'#E64A12',deep:'#CC4110',soft:'rgba(255,90,31,.12)'},
+      navy:{DEFAULT:'#1A1A1E',mid:'#212126'}, inksoft2:'#6E6E76',
+      amber:{DEFAULT:'#EAB308', soft:'rgba(234,179,8,.12)'},
+      mint:{DEFAULT:'#22C55E', soft:'rgba(34,197,94,.12)'},
     },
     fontFamily: { disp:['Sora','sans-serif'], body:['"Plus Jakarta Sans"','sans-serif'] },
-    boxShadow: { soft:'0 1px 3px rgba(15,27,45,.06), 0 6px 20px rgba(15,27,45,.05)', pop:'0 10px 30px rgba(8,145,178,.25)' },
+    boxShadow: { soft:'0 2px 10px rgba(0,0,0,.35)', pop:'0 10px 30px rgba(255,90,31,.25)' },
+    borderRadius: { xl2:'20px' },
   } },
   plugins: []
 }

@@ -11,40 +11,59 @@ export default function Dashboard() {
   const unpaid = db.invoices.filter(i=>i.status!=='Dibayar').reduce((s,i)=>s+i.total,0)
   const low = db.products.filter(p=>p.stock<=p.minStock)
   const week = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map((d,i)=>({d, v: [4.2,6.1,3.8,8.0,9.5,7.0,5.2][i]}))
+  const growth = '+12,4%'
   return (
-    <div className="p-4 md:p-7 max-w-6xl mx-auto">
-      <header className="flex items-center gap-3 mb-5">
-        <h1 className="font-disp text-lg md:text-xl font-extrabold">Dasbor</h1>
-        <Link to="/pos" className="btn-primary ml-auto text-[13px] px-4 py-2.5">🛒 Buka Kasir</Link>
-      </header>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-        <Kpi icon="💰" tone="from-cyan-500 to-blue-600" label="Penjualan" value={rp(sales)} note={`${db.txs.length} transaksi`} />
-        <Kpi icon="🧾" tone="from-amber-400 to-orange-500" label="Belum dibayar" value={rp(unpaid)} note={`${db.invoices.filter(i=>i.status!=='Dibayar').length} invoice`} />
-        <Kpi icon="⚠️" tone="from-red-400 to-rose-600" label="Stok menipis" value={`${low.length} produk`} note={low[0]?.name||'Aman semua'} />
-        <Kpi icon="👥" tone="from-emerald-400 to-teal-600" label="Pelanggan" value={`${db.customers.length}`} note="terdaftar" />
+    <div className="p-3 md:p-6 max-w-6xl mx-auto space-y-4">
+      {/* HERO: kartu portfolio ala FinPoint */}
+      <div className="bg-card rounded-3xl p-5 md:p-7 shadow-soft">
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <div>
+            <div className="text-[12px] text-inksoft font-semibold uppercase tracking-wider">Total Laba Bersih</div>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="font-disp text-3xl md:text-4xl font-extrabold text-ink">{rp(sales)}</span>
+              <span className="pill bg-lime-soft text-lime">↗ {growth}</span>
+            </div>
+          </div>
+          <Link to="/pos" className="btn-primary ml-auto text-[13px] px-5 py-3">🛒 Buka Kasir</Link>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <Mini color="#FF5A1F" label="Penjualan" value={rp(sales)} note={`${db.txs.length} transaksi`} />
+          <Mini color="#EAB308" label="Belum dibayar" value={rp(unpaid)} note={`${db.invoices.filter(i=>i.status!=='Dibayar').length} invoice`} />
+          <Mini color="#EF4444" label="Stok menipis" value={`${low.length} produk`} note={low[0]?.name||'Aman semua'} />
+          <Mini color="#22C55E" label="Pelanggan" value={`${db.customers.length}`} note="terdaftar" />
+        </div>
       </div>
-      <div className="grid lg:grid-cols-[1.6fr_1fr] gap-3.5">
-        <div className="card p-5">
-          <h3 className="font-disp font-bold text-[14.5px] mb-3">Ringkasan mingguan (juta Rp)</h3>
-          <ResponsiveContainer width="100%" height={190}>
+
+      <div className="grid lg:grid-cols-[1.6fr_1fr] gap-4">
+        {/* Grafik area oranye */}
+        <div className="card p-5 md:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-disp font-bold text-[15px]">Kinerja penjualan mingguan</h3>
+            <div className="hidden md:flex gap-1 bg-card2 rounded-full p-1">
+              {['1H','1Hr','1M','1B'].map((t,i)=>(<button key={t} className={'px-3 py-1 rounded-full text-[11px] font-semibold '+(i===3?'bg-ink text-black':'text-inksoft')}>{t}</button>))}
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={210}>
             <AreaChart data={week}>
               <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0891B2" stopOpacity={0.35}/><stop offset="100%" stopColor="#0891B2" stopOpacity={0.02}/>
+                <stop offset="0%" stopColor="#FF5A1F" stopOpacity={0.4}/><stop offset="100%" stopColor="#FF5A1F" stopOpacity={0.02}/>
               </linearGradient></defs>
-              <XAxis dataKey="d" tickLine={false} axisLine={false} fontSize={11} stroke="#94A3B8"/>
-              <Tooltip/>
-              <Area type="monotone" dataKey="v" stroke="#0891B2" strokeWidth={2.5} fill="url(#g)"/>
+              <XAxis dataKey="d" tickLine={false} axisLine={false} fontSize={11} stroke="#6E6E76"/>
+              <Tooltip contentStyle={{background:'#212126',border:'1px solid #2A2A31',borderRadius:12,color:'#F4F4F5',fontSize:12}}/>
+              <Area type="monotone" dataKey="v" stroke="#FF5A1F" strokeWidth={2.5} fill="url(#g)"/>
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="card p-5">
-          <h3 className="font-disp font-bold text-[14.5px] mb-3">Stok menipis</h3>
+
+        {/* Watchlist stok ala FinPoint */}
+        <div className="card p-5 md:p-6">
+          <h3 className="font-disp font-bold text-[15px] mb-3">Stok pantauan</h3>
           {low.length===0 && <p className="text-inksoft text-[13px]">Semua stok aman 👍</p>}
-          {low.map(p => (
-            <div key={p.id} className="flex items-center gap-3 py-2.5 border-b border-line last:border-0">
-              <span className="w-9 h-9 rounded-xl bg-paper grid place-items-center text-lg">{p.emoji}</span>
-              <div><b className="text-[13px]">{p.name}</b><div className="text-[11.5px] text-inksoft">sisa {p.stock} · min {p.minStock}</div></div>
-              <span className="ml-auto pill bg-coral-soft text-red-700">Restock</span>
+          {low.slice(0,5).map(p => (
+            <div key={p.id} className="flex items-center gap-3 py-3 border-b border-line last:border-0">
+              <span className="w-10 h-10 rounded-full bg-card2 grid place-items-center text-lg">{p.emoji}</span>
+              <div className="min-w-0"><b className="text-[13.5px] block truncate">{p.name}</b><div className="text-[11.5px] text-inksoft">sisa {p.stock} · min {p.minStock}</div></div>
+              <span className="ml-auto pill bg-coral-soft text-coral">Restock</span>
             </div>
           ))}
         </div>
@@ -52,14 +71,13 @@ export default function Dashboard() {
     </div>
   )
 }
-function Kpi({icon,tone,label,value,note}) {
-  return <div className="card p-4 flex flex-col gap-2">
-    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${tone} text-white grid place-items-center text-base shadow-soft`}>{icon}</div>
-    <div className="text-inksoft text-[11.5px] font-semibold uppercase tracking-wide">{label}</div>
-    <div className="font-disp text-[19px] md:text-[21px] font-extrabold leading-tight">{value}</div>
-    <div className="text-[11.5px] text-inksoft truncate">{note}</div>
+function Mini({color,label,value,note}) {
+  return <div className="bg-card2 rounded-2xl p-4 border-l-[3px]" style={{borderColor:color}}>
+    <div className="text-[11px] text-inksoft font-semibold">{label}</div>
+    <div className="font-disp text-[17px] md:text-[19px] font-extrabold mt-1 leading-tight">{value}</div>
+    <div className="text-[11px] text-dim truncate mt-0.5">{note}</div>
   </div>
 }
 export function Card({title, children}) {
-  return <div className="card p-5"><h3 className="font-disp font-bold text-[14.5px] mb-3">{title}</h3>{children}</div>
+  return <div className="card p-5"><h3 className="font-disp font-bold text-[15px] mb-3">{title}</h3>{children}</div>
 }
