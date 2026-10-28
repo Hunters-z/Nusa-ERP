@@ -6,7 +6,7 @@ export async function registerFingerprint(employee) {
   const cred = await navigator.credentials.create({
     publicKey: {
       challenge: crypto.getRandomValues(new Uint8Array(32)),
-      rp: { name: 'Nusa ERP' },
+      rp: { name: 'Toko Kita' },
       user: {
         id: new TextEncoder().encode(employee.id),
         name: employee.name,

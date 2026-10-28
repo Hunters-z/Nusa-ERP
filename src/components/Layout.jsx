@@ -38,8 +38,8 @@ export default function Layout() {
         <div className="flex items-center gap-2 bg-white rounded-full shadow-soft pl-4 pr-2 h-14 border border-line max-w-6xl mx-auto">
           <button className="md:hidden text-xl text-ink" onClick={()=>setOpen(true)} aria-label="Buka menu">☰</button>
           <div className="font-disp font-extrabold flex items-center gap-2 text-ink">
-            <span className="w-8 h-8 rounded-full bg-hero grid place-items-center text-sm text-white">N</span>
-            <span className="hidden sm:inline">Nusa<span className="text-hero">ERP</span></span>
+            <span className="w-8 h-8 rounded-full bg-hero grid place-items-center text-sm text-white">T</span>
+            <span className="hidden sm:inline">Toko<span className="text-hero">Kita</span></span>
           </div>
           <div className="hidden lg:flex items-center gap-1 ml-6 flex-1">
             {nav.slice(0,5).map(it => (
@@ -64,14 +64,14 @@ export default function Layout() {
         <aside className="hidden md:flex flex-col bg-white border border-line rounded-2xl shadow-soft w-[220px] shrink-0 p-3 sticky top-[76px] h-[calc(100vh-96px)] mt-3">
           <div className="text-[10px] uppercase tracking-widest text-dim px-3 mt-1 mb-2">Menu</div>
           <NavLinks/>
-          <div className="mt-auto text-[10.5px] text-dim px-3 py-2">© Nusa ERP — data lokal</div>
+          <div className="mt-auto text-[10.5px] text-dim px-3 py-2">© Toko Kita — data lokal</div>
         </aside>
 
         {open && <>
           <div className="fixed inset-0 bg-black/30 z-40 md:hidden" onClick={()=>setOpen(false)}/>
           <aside className="fixed left-0 top-0 bottom-0 z-50 bg-white w-64 p-3.5 md:hidden flex flex-col rounded-r-2xl">
             <div className="font-disp font-extrabold text-ink flex items-center gap-2 px-2 mb-4">
-              <span className="w-8 h-8 rounded-full bg-hero grid place-items-center text-sm text-white">N</span> Nusa<span className="-ml-2 text-hero">ERP</span>
+              <span className="w-8 h-8 rounded-full bg-hero grid place-items-center text-sm text-white">T</span> Toko<span className="-ml-2 text-hero">Kita</span>
               <button className="ml-auto text-inksoft text-lg" onClick={()=>setOpen(false)} aria-label="Tutup">✕</button>
             </div>
             <NavLinks onClick={()=>setOpen(false)}/>
