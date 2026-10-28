@@ -26,7 +26,7 @@ export default function Layout() {
   const NavLinks = ({onClick}) => nav.map(it => (
     <NavLink key={it.to} to={it.to} end={it.to==='/'} onClick={onClick}
       className={({isActive}) => 'flex items-center gap-3 rounded-full px-4 py-2.5 text-[13.5px] font-medium transition-colors ' +
-        (isActive ? 'bg-ink text-black font-semibold' : 'text-inksoft hover:bg-card2 hover:text-ink')}>
+        (isActive ? 'bg-hero text-white font-semibold' : 'text-inksoft hover:bg-card2 hover:text-ink')}>
       <span className="w-5 text-center">{it.icon}</span>{it.name}
       {it.to==='/inventori' && lowStock>0 && <span className="ml-auto bg-coral text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{lowStock}</span>}
     </NavLink>
@@ -35,7 +35,7 @@ export default function Layout() {
     <div className="min-h-screen bg-bg">
       {/* Header pill */}
       <header className="sticky top-0 z-40 px-3 md:px-5 pt-3">
-        <div className="flex items-center gap-2 bg-card rounded-full shadow-soft pl-4 pr-2 h-14 max-w-6xl mx-auto">
+        <div className="flex items-center gap-2 bg-white rounded-full shadow-soft pl-4 pr-2 h-14 border border-line max-w-6xl mx-auto">
           <button className="md:hidden text-xl text-ink" onClick={()=>setOpen(true)} aria-label="Buka menu">☰</button>
           <div className="font-disp font-extrabold flex items-center gap-2 text-ink">
             <span className="w-8 h-8 rounded-full bg-hero grid place-items-center text-sm text-white">N</span>
@@ -44,7 +44,7 @@ export default function Layout() {
           <div className="hidden lg:flex items-center gap-1 ml-6 flex-1">
             {nav.slice(0,5).map(it => (
               <NavLink key={it.to} to={it.to} end={it.to==='/'}
-                className={({isActive}) => 'px-4 py-2 rounded-full text-[13px] font-medium ' + (isActive?'bg-ink text-black font-semibold':'text-inksoft hover:text-ink')}>
+                className={({isActive}) => 'px-4 py-2 rounded-full text-[13px] font-medium ' + (isActive?'bg-hero text-white font-semibold':'text-inksoft hover:text-ink')}>
                 {it.name}
               </NavLink>
             ))}
@@ -61,15 +61,15 @@ export default function Layout() {
 
       <div className="flex max-w-6xl mx-auto px-3 md:px-5">
         {/* Sidebar kartu gelap */}
-        <aside className="hidden md:flex flex-col bg-card rounded-2xl shadow-soft w-[220px] shrink-0 p-3 sticky top-[76px] h-[calc(100vh-96px)] mt-3">
+        <aside className="hidden md:flex flex-col bg-white border border-line rounded-2xl shadow-soft w-[220px] shrink-0 p-3 sticky top-[76px] h-[calc(100vh-96px)] mt-3">
           <div className="text-[10px] uppercase tracking-widest text-dim px-3 mt-1 mb-2">Menu</div>
           <NavLinks/>
           <div className="mt-auto text-[10.5px] text-dim px-3 py-2">© Nusa ERP — data lokal</div>
         </aside>
 
         {open && <>
-          <div className="fixed inset-0 bg-black/60 z-40 md:hidden" onClick={()=>setOpen(false)}/>
-          <aside className="fixed left-0 top-0 bottom-0 z-50 bg-card w-64 p-3.5 md:hidden flex flex-col rounded-r-2xl">
+          <div className="fixed inset-0 bg-black/30 z-40 md:hidden" onClick={()=>setOpen(false)}/>
+          <aside className="fixed left-0 top-0 bottom-0 z-50 bg-white w-64 p-3.5 md:hidden flex flex-col rounded-r-2xl">
             <div className="font-disp font-extrabold text-ink flex items-center gap-2 px-2 mb-4">
               <span className="w-8 h-8 rounded-full bg-hero grid place-items-center text-sm text-white">N</span> Nusa<span className="-ml-2 text-hero">ERP</span>
               <button className="ml-auto text-inksoft text-lg" onClick={()=>setOpen(false)} aria-label="Tutup">✕</button>
@@ -83,7 +83,7 @@ export default function Layout() {
       </div>
 
       {/* Bottom nav pill mengambang */}
-      <nav className="md:hidden fixed bottom-3 inset-x-3 z-40 bg-card rounded-full shadow-pop border border-line flex h-16">
+      <nav className="md:hidden fixed bottom-3 inset-x-3 z-40 bg-white rounded-full shadow-pop border border-line flex h-16">
         {bottomNav.map(it => (
           <NavLink key={it.to} to={it.to} end={it.to==='/'}
             className={({isActive}) => 'flex-1 flex flex-col items-center justify-center gap-0.5 text-[9.5px] font-semibold rounded-full ' + (isActive?'bg-card2 text-hero':'text-inksoft')}>

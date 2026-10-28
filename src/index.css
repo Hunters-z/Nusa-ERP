@@ -3,18 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 
-body { background:#101013; color:#F4F4F5; font-family:'Plus Jakarta Sans',sans-serif; }
+body { background:#F4F6FA; color:#10131A; font-family:'Plus Jakarta Sans',sans-serif; }
 h1,h2,h3 { font-family:'Sora',sans-serif; }
 
-.card { background:#1A1A1E; border-radius:20px; box-shadow:0 2px 10px rgba(0,0,0,.35); }
-.card2 { background:#212126; border-radius:16px; }
+.card { background:#FFFFFF; border-radius:20px; box-shadow:0 2px 12px rgba(16,19,26,.06); }
+.card2 { background:#F1F3F8; border-radius:16px; }
 .pill { border-radius:999px; padding:3px 10px; font-size:11px; font-weight:600; display:inline-block; }
-.btn-primary { background:#FF5A1F; color:#fff; border-radius:999px; font-weight:600; transition:.15s; }
+.btn-primary { background:#2563EB; color:#fff; border-radius:999px; font-weight:600; transition:.15s; }
 .btn-primary:hover { filter:brightness(1.08); }
-.btn-ghost { background:#212126; color:#F4F4F5; border-radius:999px; font-weight:600; }
-.inp { background:#212126; border:1px solid #2A2A31; border-radius:12px; padding:10px 14px; color:#F4F4F5; font-size:14px; width:100%; outline:none; }
-.inp:focus { border-color:#FF5A1F; }
+.btn-ghost { background:#F1F3F8; color:#10131A; border-radius:999px; font-weight:600; }
+.inp { background:#FFFFFF; border:1px solid #E6E9F0; border-radius:12px; padding:10px 14px; color:#10131A; font-size:14px; width:100%; outline:none; }
+.inp:focus { border-color:#2563EB; box-shadow:0 0 0 3px #EAF0FE; }
 table { width:100%; border-collapse:collapse; }
-th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#6E6E76; padding:8px 10px; }
-td { padding:11px 10px; font-size:13.5px; border-top:1px solid #2A2A31; }
-.gain { color:#22C55E; } .loss { color:#EF4444; }
+th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#9AA1AD; padding:8px 10px; }
+td { padding:11px 10px; font-size:13.5px; border-top:1px solid #E6E9F0; }
+.gain { color:#16A34A; } .loss { color:#DC2626; }

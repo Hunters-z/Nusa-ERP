@@ -15,7 +15,7 @@ export default function Dashboard() {
   return (
     <div className="p-3 md:p-6 max-w-6xl mx-auto space-y-4">
       {/* HERO: kartu portfolio ala FinPoint */}
-      <div className="bg-card rounded-3xl p-5 md:p-7 shadow-soft">
+      <div className="bg-white border border-line rounded-3xl p-5 md:p-7 shadow-soft">
         <div className="flex flex-wrap items-center gap-3 mb-5">
           <div>
             <div className="text-[12px] text-inksoft font-semibold uppercase tracking-wider">Total Laba Bersih</div>
@@ -27,7 +27,7 @@ export default function Dashboard() {
           <Link to="/pos" className="btn-primary ml-auto text-[13px] px-5 py-3">🛒 Buka Kasir</Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <Mini color="#FF5A1F" label="Penjualan" value={rp(sales)} note={`${db.txs.length} transaksi`} />
+          <Mini color="#2563EB" label="Penjualan" value={rp(sales)} note={`${db.txs.length} transaksi`} />
           <Mini color="#EAB308" label="Belum dibayar" value={rp(unpaid)} note={`${db.invoices.filter(i=>i.status!=='Dibayar').length} invoice`} />
           <Mini color="#EF4444" label="Stok menipis" value={`${low.length} produk`} note={low[0]?.name||'Aman semua'} />
           <Mini color="#22C55E" label="Pelanggan" value={`${db.customers.length}`} note="terdaftar" />
@@ -40,17 +40,17 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-disp font-bold text-[15px]">Kinerja penjualan mingguan</h3>
             <div className="hidden md:flex gap-1 bg-card2 rounded-full p-1">
-              {['1H','1Hr','1M','1B'].map((t,i)=>(<button key={t} className={'px-3 py-1 rounded-full text-[11px] font-semibold '+(i===3?'bg-ink text-black':'text-inksoft')}>{t}</button>))}
+              {['1H','1Hr','1M','1B'].map((t,i)=>(<button key={t} className={'px-3 py-1 rounded-full text-[11px] font-semibold '+(i===3?'bg-hero text-white':'text-inksoft')}>{t}</button>))}
             </div>
           </div>
           <ResponsiveContainer width="100%" height={210}>
             <AreaChart data={week}>
               <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FF5A1F" stopOpacity={0.4}/><stop offset="100%" stopColor="#FF5A1F" stopOpacity={0.02}/>
+                <stop offset="0%" stopColor="#2563EB" stopOpacity={0.4}/><stop offset="100%" stopColor="#2563EB" stopOpacity={0.02}/>
               </linearGradient></defs>
-              <XAxis dataKey="d" tickLine={false} axisLine={false} fontSize={11} stroke="#6E6E76"/>
-              <Tooltip contentStyle={{background:'#212126',border:'1px solid #2A2A31',borderRadius:12,color:'#F4F4F5',fontSize:12}}/>
-              <Area type="monotone" dataKey="v" stroke="#FF5A1F" strokeWidth={2.5} fill="url(#g)"/>
+              <XAxis dataKey="d" tickLine={false} axisLine={false} fontSize={11} stroke="#9AA1AD"/>
+              <Tooltip contentStyle={{background:'#fff',border:'1px solid #E6E9F0',borderRadius:12,color:'#10131A',fontSize:12}}/>
+              <Area type="monotone" dataKey="v" stroke="#2563EB" strokeWidth={2.5} fill="url(#g)"/>
             </AreaChart>
           </ResponsiveContainer>
         </div>
